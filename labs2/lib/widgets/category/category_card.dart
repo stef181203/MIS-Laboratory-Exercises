@@ -10,12 +10,12 @@ class CategoryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // handle
+        Navigator.pushNamed(context, "/meals", arguments: category.name);
       },
       child: Card(
         shape: RoundedRectangleBorder(
-          side: BorderSide(color: Colors.red.shade300, width: 3),
-          borderRadius: BorderRadius.circular(10),
+          side: BorderSide(color: Colors.blue.shade600, width: 2),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Padding(
           padding: EdgeInsets.all(15),
@@ -52,18 +52,17 @@ class CategoryCard extends StatelessWidget {
                 width: 320,
                 child: Divider(),
               ),
-              const SizedBox(height: 12),
-              Container(
-                height: 60,
-                width: 320,
-                alignment: Alignment.center,
-                child: Text(
-                  '${category.description.split('.').first.trim()}.',
-                  style: TextStyle(fontSize: 15),
-                  textAlign: TextAlign.center,
+              Expanded(
+                child: Container(
+                  alignment: Alignment.center,
+                  child: Text(
+                    '${category.description.split('.').first.trim()}.',
+                    style: TextStyle(fontSize: 15),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
-          ],
+            ],
           ),
         ),
       ),

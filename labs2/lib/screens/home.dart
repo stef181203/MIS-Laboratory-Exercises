@@ -102,6 +102,4 @@ class _MyHomePageState extends State<MyHomePage> {
       _isLoading = false;
     });
   }
-
-
 }

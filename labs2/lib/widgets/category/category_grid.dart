@@ -8,18 +8,18 @@ class CategoryGrid extends StatefulWidget {
   const CategoryGrid({super.key, required this.categories});
 
   @override
-  State<StatefulWidget> createState() => _PokemonGridState();
+  State<StatefulWidget> createState() => _CategoryGridState();
 }
 
-class _PokemonGridState extends State<CategoryGrid> {
+class _CategoryGridState extends State<CategoryGrid> {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 1,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          childAspectRatio: 200/215
+          mainAxisSpacing: 2,
+          crossAxisSpacing: 2,
+          childAspectRatio: 200/210
       ),
       itemCount: widget.categories.length,
       physics: BouncingScrollPhysics(),

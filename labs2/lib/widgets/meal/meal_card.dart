@@ -12,7 +12,7 @@ class MealCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.pushNamed(context, "/meals/details", arguments: meal.id);
+        Navigator.pushNamed(context, "/meals/details", arguments: { 'mealId': meal.id });
       },
       child: Card(
         shape: RoundedRectangleBorder(

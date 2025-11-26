@@ -62,4 +62,46 @@ class ApiService {
     }
   }
 
+  Future<MealDetails?> loadRandomMealDetails() async {
+    try {
+      final response = await http.get(
+          Uri.parse('https://www.themealdb.com/api/json/v1/1/random.php'),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['meals'] != null && data['meals'].isNotEmpty) {
+          return MealDetails.fromJson(data['meals'][0]);
+        }
+      }
+      return null;
+    }
+    catch (e) {
+      return null;
+    }
+  }
+
+  Future<Meal?> searchMealByName(String name) async {
+    try {
+      final response = await http.get(
+        Uri.parse('https://www.themealdb.com/api/json/v1/1/search.php?s=${name.toLowerCase()}'),
+      );
+
+      print(name);
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data['meals'] != null && data['meals'].isNotEmpty) {
+          return Meal.fromJson(data['meals'][0]);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+
 }

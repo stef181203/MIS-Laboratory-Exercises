@@ -14,8 +14,12 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   late final List<Category> _categories;
+  List<Category> _filteredCategories = [];
   bool _isLoading = true;
+  String _searchQuery = '';
   final ApiService _apiService = ApiService();
+  final TextEditingController _searchController = TextEditingController();
+
 
 
   @override
@@ -30,33 +34,50 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
+        actions: [
+          FilledButton(
+            style: ButtonStyle(
+              backgroundColor: WidgetStatePropertyAll(Colors.blue.shade400)
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, "/meals/details", arguments: { 'title': 'Random Meal' });
+            },
+            child: const Text(
+              "Random Meal",
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
-          // Padding(
-          //   padding: const EdgeInsets.all(12.0),
-          //   child: TextField(
-          //     controller: _searchController,
-          //     decoration: InputDecoration(
-          //       hintText: 'Search Pokemon by name...',
-          //       prefixIcon: const Icon(Icons.search),
-          //       border: OutlineInputBorder(
-          //         borderRadius: BorderRadius.circular(10),
-          //       ),
-          //     ),
-          //     onChanged: (value) {
-          //       setState(() {
-          //         _searchQuery = value;
-          //       });
-          //       _filterPokemon(value);
-          //     },
-          //   ),
-          // ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search Category by name...',
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+                _filterCategory(value);
+              },
+            ),
+          ),
           Expanded(
-            child: _categories.isEmpty
-                ? Center(
+            child: _filteredCategories.isEmpty && _searchQuery.isNotEmpty ?
+                Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -66,27 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
                     'No Category found',
                     style: TextStyle(fontSize: 18, color: Colors.grey),
                   ),
-                  // const SizedBox(height: 8),
-                  // TextButton(
-                  //   onPressed: _isSearching
-                  //       ? null
-                  //       : () async {
-                  //     await _searchPokemonByName(_searchQuery);
-                  //   },
-                  //   child: _isSearching
-                  //       ? const SizedBox(
-                  //     width: 20,
-                  //     height: 20,
-                  //     child: CircularProgressIndicator(strokeWidth: 2),
-                  //   )
-                  //       : const Text('Search in API'),
-                  // ),
                 ],
               ),
             )
                 : Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              child: CategoryGrid(categories: _categories),
+              child: CategoryGrid(categories: _filteredCategories),
             ),
           ),
         ],
@@ -99,7 +105,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
     setState(() {
       _categories = categoryList;
+      _filteredCategories = categoryList;
       _isLoading = false;
     });
   }
+
+  void _filterCategory(String query) {
+    setState(() {
+      _searchQuery = query;
+      if (query.isEmpty) {
+        _filteredCategories = _categories;
+      } else {
+        _filteredCategories = _categories
+            .where((pokemon) =>
+            pokemon.name.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      }
+    });
+  }
+
 }

@@ -3,15 +3,14 @@ import '../models/meal_details_model.dart';
 import '../services/api_service.dart';
 
 class MealDetailsPage extends StatefulWidget {
-  const MealDetailsPage({super.key, this.title = 'Details'});
-
-  final String title;
+  const MealDetailsPage({super.key});
 
   @override
   State<MealDetailsPage> createState() => _MealDetailsPageState();
 }
 
 class _MealDetailsPageState extends State<MealDetailsPage> {
+  String _title = 'Details';
   MealDetails? _meal;
   bool _isLoading = true;
   final ApiService _apiService = ApiService();
@@ -19,7 +18,15 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _loadMealDetails();
+
+    final args = ModalRoute.of(context)!.settings.arguments as Map?;
+    if(args?['title'] == 'Random Meal') {
+      _title = 'Random Meal';
+      _loadRandomMealDetails();
+    }
+    else {
+      _loadMealDetails();
+    }
   }
 
   @override
@@ -27,7 +34,7 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
+        title: Text(_title),
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -73,11 +80,20 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
     );
   }
 
-
   void _loadMealDetails() async {
-    final mealId = ModalRoute.of(context)!.settings.arguments as int;
+    final args = ModalRoute.of(context)!.settings.arguments as Map?;
+    final mealId = args?['mealId'] as int;
     final mealDetails = await _apiService.loadMealDetails(mealId);
 
+    if (!mounted) return;
+    setState(() {
+      _meal = mealDetails;
+      _isLoading = false;
+    });
+  }
+
+  void _loadRandomMealDetails() async {
+    final mealDetails = await _apiService.loadRandomMealDetails();
 
     if (!mounted) return;
     setState(() {

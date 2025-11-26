@@ -12,10 +12,14 @@ class MealsPage extends StatefulWidget {
 
 class _MealsPageState extends State<MealsPage> {
   late final List<Meal> _meals;
+  List<Meal> _filteredMeals = [];
   bool _isLoading = true;
   late final String _categoryName;
   bool _loaded = false;
   final ApiService _apiService = ApiService();
+  bool _isSearching = false;
+  String _searchQuery = '';
+  final TextEditingController _searchController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -39,8 +43,48 @@ class _MealsPageState extends State<MealsPage> {
           ? const Center(child: CircularProgressIndicator())
           : Column(
         children: [
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Row(
+              children: [
+                Expanded(
+                    child: TextField(
+                      controller: _searchController,
+                      decoration: InputDecoration(
+                        hintText: 'Search Meal by name...',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                      onChanged: (value) {
+                        setState(() {
+                          _searchQuery = value;
+                        });
+                      },
+                    ),
+                ),
+                TextButton(
+                  onPressed: _isSearching
+                      ? null
+                      : () async {
+                    await _searchMealByName(_searchQuery);
+                  },
+                  child: _isSearching
+                      ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                      : const Text('Search'),
+                ),
+
+              ],
+            ),
+
+          ),
           Expanded(
-            child: _meals.isEmpty
+            child: _filteredMeals.isEmpty && _searchQuery.isNotEmpty
                 ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -56,7 +100,7 @@ class _MealsPageState extends State<MealsPage> {
             )
                 : Padding(
               padding: EdgeInsets.symmetric(horizontal: 12),
-              child: MealGrid(meals: _meals),
+              child: MealGrid(meals: _filteredMeals),
             ),
           ),
         ],
@@ -69,8 +113,29 @@ class _MealsPageState extends State<MealsPage> {
 
     setState(() {
       _meals = mealsList;
+      _filteredMeals = mealsList;
       _isLoading = false;
     });
   }
+
+  Future<void> _searchMealByName(String name) async {
+    if (name.isEmpty) return;
+
+    setState(() {
+      _isSearching = true;
+    });
+
+    final meal = await _apiService.searchMealByName(name);
+
+    setState(() {
+      _isSearching = false;
+      if (meal != null && meal.category == _categoryName) {
+        _filteredMeals = [meal];
+      } else {
+        _filteredMeals = [];
+      }
+    });
+  }
+
 }
 

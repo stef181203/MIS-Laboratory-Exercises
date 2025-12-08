@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:labs3/screens/details.dart';
+import 'package:labs3/screens/favorites.dart';
 import 'package:labs3/screens/home.dart';
 import 'package:labs3/screens/meals.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,6 +29,7 @@ class MyApp extends StatelessWidget {
         "/": (context) => const MyHomePage(title: 'Meals App'),
         "/meals": (context) => const MealsPage(),
         "/meals/details": (context) => const MealDetailsPage(),
+        '/favorites': (context) => FavoritesPage(),
       },
     );
   }

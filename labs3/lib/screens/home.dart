@@ -35,6 +35,12 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pushNamed(context, "/favorites");
+            },
+            child: Text("Favorites"),
+          ),
           FilledButton(
             style: ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(Colors.blue.shade400)

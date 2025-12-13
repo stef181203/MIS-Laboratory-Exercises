@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/category_model.dart';
 import '../services/api_service.dart';
+import '../services/notifications/random_meal_notification.dart';
 import '../widgets/category/category_grid.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -35,6 +36,15 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
         actions: [
+          TextButton(
+            onPressed: () {
+              RandomMealNotification.start(seconds: 10);
+            },
+            child: const Text(
+              "Notify",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
           TextButton(
             onPressed: () {
               Navigator.pushNamed(context, "/favorites");

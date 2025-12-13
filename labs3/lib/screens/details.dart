@@ -20,13 +20,17 @@ class _MealDetailsPageState extends State<MealDetailsPage> {
     super.didChangeDependencies();
 
     final args = ModalRoute.of(context)!.settings.arguments as Map?;
-    if(args?['title'] == 'Random Meal') {
-      _title = 'Random Meal';
+    if(args?['title'] != null) {
+      _title = args?['title'];
+    }
+
+    if(_title == 'Random Meal') {
       _loadRandomMealDetails();
     }
     else {
       _loadMealDetails();
     }
+
   }
 
   @override
